@@ -57,7 +57,7 @@ def calculate_regression(data, seasons):
     X_2025 = seasons[25][features]
     pred_2026 = model.predict(X_2025)
     seasons[25]["FPTS_26"] = pred_2026
-    # print(seasons[25][["Player", "FPTS", "FPTS_26"]].sort_values("FPTS_26", ascending = False).head(20))
+    print(seasons[25][["Player", "FPTS", "FPTS_26"]].sort_values("FPTS_26", ascending = False).head(20))
     sorted = (seasons[25][["Player", "FPTS", "FPTS_26"]].sort_values("FPTS_26", ascending = False))
     sorted.to_csv("data/2025season_predictions.csv", index = False)
 
