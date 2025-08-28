@@ -2,6 +2,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 import pandas as pd
+pd.options.display.float_format = "{:.1f}".format
 
 
 def load_data(season, year):
@@ -41,11 +42,11 @@ def main():
         path = f"data/20{y}season.csv"
         seasons[y] = load_data(path, y)
     
-    print(seasons[25][seasons[25]["Player"] == "LeBron James"])
-    print(seasons[24][seasons[24]["Player"] == "LeBron James"])
-    print(seasons[23][seasons[23]["Player"] == "LeBron James"])
-    print(seasons[22][seasons[22]["Player"] == "LeBron James"])
-    print(seasons[21][seasons[21]["Player"] == "LeBron James"])
+    print(seasons[25][seasons[25]["Player"] == "James Harden"])
+    print(seasons[24][seasons[24]["Player"] == "James Harden"])
+    print(seasons[23][seasons[23]["Player"] == "James Harden"])
+    print(seasons[22][seasons[22]["Player"] == "James Harden"])
+    print(seasons[21][seasons[21]["Player"] == "James Harden"])
 
 if __name__=="__main__":
     main()
