@@ -33,6 +33,8 @@ def collapse_multiteam(df):
         if col not in ["G"]:  
             grouped[col] = grouped[col] / grouped["_total_games"]
     grouped.drop(columns = "_total_games", inplace = True)
+    pos_map = (df.groupby("Player")["Pos"].agg(lambda s: s.mode().iat[0] if not s.mode().empty else s.iloc[0]).reset_index())
+    grouped = grouped.merge(pos_map, on="Player", how="left")
     return grouped
 
 def build_training_data(seasons):
@@ -57,9 +59,9 @@ def calculate_regression(data, seasons):
     X_2025 = seasons[25][features]
     pred_2026 = model.predict(X_2025)
     seasons[25]["FPTS_26"] = pred_2026
-    print(seasons[25][["Player", "FPTS", "FPTS_26"]].sort_values("FPTS_26", ascending = False).head(20))
-    sorted = (seasons[25][["Player", "FPTS", "FPTS_26"]].sort_values("FPTS_26", ascending = False))
+    sorted = (seasons[25][["Player", "Pos", "FPTS", "FPTS_26"]].sort_values("FPTS_26", ascending = False))
     sorted.to_csv("data/2025season_predictions.csv", index = False)
+    return sorted
 
 def main():
     years = [21, 22, 23, 24, 25]
@@ -68,7 +70,8 @@ def main():
         path = f"data/20{y}season.csv"
         seasons[y] = load_data(path, y)
     data = build_training_data(seasons)
-    calculate_regression(data, seasons)
+    sorted = calculate_regression(data, seasons)
+    print(sorted.head(15))
 
 if __name__=="__main__":
     main()
