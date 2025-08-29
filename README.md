@@ -8,6 +8,12 @@
 
 ---
 
+### Results
+
+![Logo](Prediction_Results.png)
+
+---
+
 ### Requirements
 
 - Install dependencies:

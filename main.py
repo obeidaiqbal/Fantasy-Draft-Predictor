@@ -2,6 +2,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 import pandas as pd
+import sqlite3
+import os
 pd.options.display.float_format = "{:.1f}".format
 
 
@@ -63,6 +65,28 @@ def calculate_regression(data, seasons):
     sorted.to_csv("data/2025season_predictions.csv", index = False)
     return sorted
 
+def build_database(sorted):
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path + "/Predictions2026.db")
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS Predictions2026 (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Player TEXT,
+            Pos TEXT,
+            FPTS REAL,
+            FPTS_26 REAL
+        )
+    """)
+    conn.commit()
+    for _, player in sorted.iterrows():
+        cur.execute(
+            "INSERT OR IGNORE INTO Predictions2026 (Player, Pos, FPTS, FPTS_26) VALUES (?, ?, ?, ?)", 
+            (player["Player"], player["Pos"], round(player["FPTS"], 1), round(player["FPTS_26"], 1))
+        )
+    conn.commit()
+    conn.close()
+
 def main():
     years = [21, 22, 23, 24, 25]
     seasons = {}
@@ -71,7 +95,8 @@ def main():
         seasons[y] = load_data(path, y)
     data = build_training_data(seasons)
     sorted = calculate_regression(data, seasons)
-    print(sorted.head(15))
+    build_database(sorted)
+    print(sorted.head(5))
 
 if __name__=="__main__":
     main()
